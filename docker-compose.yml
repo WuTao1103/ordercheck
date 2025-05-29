@@ -1,0 +1,10 @@
+version: '3.8'
+
+services:
+  ordercheck:
+    build:
+      context: .
+    ports:
+      - "1037:1037"
+    environment:
+      - NODE_ENV=production
