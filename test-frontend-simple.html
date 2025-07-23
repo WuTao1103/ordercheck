@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Check API 测试</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .result {
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #f8f9fa;
+            border-radius: 5px;
+            white-space: pre-wrap;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <h1>Order Check API 测试页面</h1>
+    
+    <div class="test-section">
+        <h3>1. 查询记录</h3>
+        <button onclick="testQueryRecords()">查询记录</button>
+        <div id="queryResult" class="result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h3>2. 获取统计信息</h3>
+        <button onclick="testGetStats()">获取统计</button>
+        <div id="statsResult" class="result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h3>3. 保存测试记录</h3>
+        <button onclick="testSaveRecord()">保存记录</button>
+        <div id="saveResult" class="result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h3>4. 显示记录表格</h3>
+        <button onclick="showRecordsTable()">显示表格</button>
+        <div id="tableResult"></div>
+    </div>
+
+    <script>
+        const API_BASE_URL = 'http://localhost:1110/api';
+        
+        async function testQueryRecords() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/check-records`);
+                const data = await response.json();
+                
+                document.getElementById('queryResult').textContent = 
+                    `状态: ${response.status}\n` +
+                    `成功: ${data.success}\n` +
+                    `记录数: ${data.data ? data.data.length : 0}\n` +
+                    `响应: ${JSON.stringify(data, null, 2)}`;
+            } catch (error) {
+                document.getElementById('queryResult').textContent = `错误: ${error.message}`;
+            }
+        }
+        
+        async function testGetStats() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/check-records/stats`);
+                const data = await response.json();
+                
+                document.getElementById('statsResult').textContent = 
+                    `状态: ${response.status}\n` +
+                    `成功: ${data.success}\n` +
+                    `统计信息: ${JSON.stringify(data.data, null, 2)}`;
+            } catch (error) {
+                document.getElementById('statsResult').textContent = `错误: ${error.message}`;
+            }
+        }
+        
+        async function testSaveRecord() {
+            try {
+                const testData = {
+                    workOrder: 'TEST_' + Date.now(),
+                    trackingNumber: '123456789012',
+                    checkResult: true
+                };
+                
+                const response = await fetch(`${API_BASE_URL}/check-records`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(testData)
+                });
+                
+                const data = await response.json();
+                
+                document.getElementById('saveResult').textContent = 
+                    `状态: ${response.status}\n` +
+                    `成功: ${data.success}\n` +
+                    `消息: ${data.message}\n` +
+                    `测试数据: ${JSON.stringify(testData, null, 2)}`;
+            } catch (error) {
+                document.getElementById('saveResult').textContent = `错误: ${error.message}`;
+            }
+        }
+        
+        async function showRecordsTable() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/check-records`);
+                const data = await response.json();
+                
+                if (data.success && data.data.length > 0) {
+                    let tableHTML = '<table><thead><tr><th>ID</th><th>工单号</th><th>跟踪号</th><th>结果</th><th>时间</th></tr></thead><tbody>';
+                    
+                    data.data.forEach(record => {
+                        const date = new Date(record.check_time).toLocaleString('zh-CN');
+                        tableHTML += `
+                            <tr>
+                                <td>${record.id}</td>
+                                <td>${record.work_order}</td>
+                                <td>${record.tracking_number}</td>
+                                <td style="color: ${record.check_result ? 'green' : 'red'}">${record.check_result ? '成功' : '失败'}</td>
+                                <td>${date}</td>
+                            </tr>
+                        `;
+                    });
+                    
+                    tableHTML += '</tbody></table>';
+                    document.getElementById('tableResult').innerHTML = tableHTML;
+                } else {
+                    document.getElementById('tableResult').innerHTML = '<p>没有找到记录</p>';
+                }
+            } catch (error) {
+                document.getElementById('tableResult').innerHTML = `<p>错误: ${error.message}</p>`;
+            }
+        }
+    </script>
+</body>
+</html> 

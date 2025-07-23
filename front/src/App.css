@@ -1,0 +1,66 @@
+.App {
+  text-align: center;
+}
+
+.App-logo {
+  height: 40vmin;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .App-logo {
+    animation: App-logo-spin infinite 20s linear;
+  }
+}
+
+.App-header {
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+.App-link {
+  color: #61dafb;
+}
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+input[type="text"] {
+  width: 300px; /* 设置输入框的宽度 */
+  height: 40px; /* 设置输入框的高度 */
+  font-size: 16px; /* 设置字体大小 */
+  padding: 10px; /* 设置内边距 */
+  margin: 10px 0; /* 设置上下外边距 */
+}
+
+button {
+  background-color: #007aff; /* 苹果蓝色 */
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 12px 24px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin: 10px;
+}
+
+button:hover {
+  background-color: #005bb5; /* 深蓝色悬停效果 */
+}
+
+button:active {
+  background-color: #004494; /* 点击效果 */
+}

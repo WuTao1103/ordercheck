@@ -1,0 +1,49 @@
+version: '3.8'
+
+services:
+  # 后端API服务
+  backend:
+    build:
+      context: ./backend
+    ports:
+      - "1059:3001"
+    environment:
+      - NODE_ENV=production
+      - DB_HOST=mysql
+    depends_on:
+      - mysql
+    networks:
+      - app-network
+
+  # MySQL数据库
+  mysql:
+    image: mysql:8.0
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: 123456
+      MYSQL_DATABASE: ordercheck_db
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - app-network
+
+  # 前端服务
+  frontend:
+    build:
+      context: ./front
+    ports:
+      - "1100:80"
+    environment:
+      - NODE_ENV=production
+    depends_on:
+      - backend
+    networks:
+      - app-network
+
+volumes:
+  mysql_data:
+
+networks:
+  app-network:
+    driver: bridge

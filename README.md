@@ -1,70 +1,142 @@
-# Getting Started with Create React App
+# Order Check - 订单核对系统
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+这是一个用于订单核对和记录查询的React应用程序。
 
-## Available Scripts
+## 功能特性
 
-In the project directory, you can run:
+### 主要功能
+- **Excel文件上传**: 支持上传.xlsx格式的订单文件
+- **订单核对**: 输入工单号和运输单号进行核对
+- **任务管理**: 显示完成进度和统计信息
+- **音效反馈**: 核对成功/失败时播放音效
 
-### `npm start`
+### 新增功能 - 查询记录
+- **记录保存**: 自动保存每次核对记录到MySQL数据库
+- **记录查询**: 支持按工单号、跟踪号、时间范围查询
+- **统计信息**: 显示核对成功率、总次数等统计
+- **分页显示**: 支持分页查看历史记录
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## 技术栈
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+### 前端
+- React 19.1.0
+- xlsx (Excel文件处理)
+- ajv (JSON验证)
 
-### `npm test`
+### 后端
+- Node.js + Express
+- MySQL 8.0
+- mysql2 (数据库驱动)
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## 快速开始
 
-### `npm run build`
+### 方式一：使用Docker（推荐）
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+```bash
+# 启动所有服务
+docker-compose up -d
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+# 访问应用
+# 前端: http://localhost:1037
+# 后端API: http://localhost:3001
+# MySQL: localhost:3306
+```
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+### 方式二：本地开发
 
-### `npm run eject`
+1. **启动MySQL服务**
+```bash
+# macOS (使用Homebrew)
+brew services start mysql
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+# 或者使用Docker
+docker run -d --name mysql -p 3306:3306 -e MYSQL_ROOT_PASSWORD=123456 mysql:8.0
+```
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+2. **启动应用**
+```bash
+# 使用启动脚本
+./start.sh
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+# 或者手动启动
+# 启动后端
+cd backend
+npm install
+npm start
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+# 启动前端（新终端）
+npm start
+```
 
-## Learn More
+## 数据库配置
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+- **主机**: 192.168.0.50
+- **端口**: 3306
+- **用户名**: root
+- **密码**: 123456
+- **数据库**: ordercheck_db
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+数据库和表会在首次启动时自动创建。
 
-### Code Splitting
+## API接口
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+### 保存核对记录
+```
+POST /api/check-records
+Content-Type: application/json
 
-### Analyzing the Bundle Size
+{
+  "workOrder": "工单号",
+  "trackingNumber": "跟踪号", 
+  "checkResult": true/false
+}
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+### 查询记录
+```
+GET /api/check-records?workOrder=xxx&trackingNumber=xxx&startDate=2024-01-01&endDate=2024-12-31&page=1&limit=20
+```
 
-### Making a Progressive Web App
+### 获取统计信息
+```
+GET /api/check-records/stats?startDate=2024-01-01&endDate=2024-12-31
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+## 使用说明
 
-### Advanced Configuration
+1. **上传Excel文件**: 点击文件上传按钮，选择包含订单信息的.xlsx文件
+2. **核对订单**: 
+   - 输入工单号，按Enter键切换到跟踪号输入框
+   - 输入跟踪号，按Enter键进行核对
+   - 系统会自动截取跟踪号后12位进行匹配
+3. **查看记录**: 点击"查看记录"按钮切换到记录查询界面
+4. **查询历史**: 在查询界面可以按条件筛选历史记录
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+## 开发
 
-### Deployment
+### 可用脚本
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+```bash
+# 前端
+npm start          # 启动开发服务器
+npm run build      # 构建生产版本
+npm test           # 运行测试
 
-### `npm run build` fails to minify
+# 后端
+cd backend
+npm start          # 启动后端服务
+npm run dev        # 开发模式（自动重启）
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+## 部署
+
+使用Docker Compose进行生产环境部署：
+
+```bash
+docker-compose up -d
+```
+
+应用将在以下端口运行：
+- 前端: http://localhost:1037
+- 后端API: http://localhost:3001
+- MySQL: localhost:3306
