@@ -24,7 +24,7 @@ docker-compose up --build -d
 
 echo "✅ 后端部署完成！"
 echo "🔧 后端API: http://localhost:1110/api"
-echo "🗄️  MySQL: localhost:3306"
+echo "🗄️  连接到服务器MySQL: localhost:3306"
 echo ""
 echo "📋 查看服务状态: docker-compose ps"
 echo "📋 查看日志: docker-compose logs -f" 

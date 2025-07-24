@@ -4,7 +4,7 @@ const cors = require('cors');
 require('dotenv').config();
 
 const app = express();
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT || 1110;
 
 // 中间件
 app.use(cors());
@@ -12,11 +12,11 @@ app.use(express.json());
 
 // 数据库连接配置
 const dbConfig = {
-  host: process.env.DB_HOST || 'mysql',  // 在Docker中使用服务名，本地开发使用localhost
-  port: 3306,
-  user: 'root',
-  password: '123456',
-  database: 'ordercheck_db'
+  host: process.env.DB_HOST || '192.168.0.50',  // NAS服务器IP
+  port: process.env.DB_PORT || 3306,
+  user: process.env.DB_USER || 'root',
+  password: process.env.DB_PASSWORD || '123456',
+  database: process.env.DB_NAME || 'ordercheck_db'
 };
 
 // 创建数据库连接池

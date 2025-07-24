@@ -5,12 +5,8 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm install --production
 
-COPY . .
+COPY server-test.js server.js
 
 EXPOSE 1110
-
-# 设置环境变量
-ENV NODE_ENV=production
-ENV PORT=1110
 
 CMD ["node", "server.js"] 

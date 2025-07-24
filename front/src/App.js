@@ -22,7 +22,8 @@ function App() {
   const trackingNumberRef = useRef(null);
   const workOrderRef = useRef(null);
 
-  const API_BASE_URL = 'http://localhost:1110/api';
+  // API基础URL
+  const API_BASE_URL = 'http://192.168.0.50:1110/api';
 
   // 保存核对记录到数据库
   const saveCheckRecord = async (workOrder, trackingNumber, checkResult) => {

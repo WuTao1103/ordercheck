@@ -1,20 +1,15 @@
 version: '3.8'
 
 services:
-  # 后端API服务
+  # 后端API服务（测试版）
   backend:
     build:
       context: .
+      dockerfile: Dockerfile-test
     ports:
       - "1110:1110"
     environment:
       - NODE_ENV=production
-      - PORT=1110
-      - DB_HOST=192.168.0.50
-      - DB_PORT=3306
-      - DB_USER=root
-      - DB_PASSWORD=123456
-      - DB_NAME=ordercheck_db
     networks:
       - backend-network
 

@@ -58,7 +58,7 @@ docker-compose up --build -d
 
 - **前端**：http://localhost:1100
 - **后端API**：http://localhost:1110/api
-- **MySQL**：localhost:3306
+- **MySQL**：连接到服务器上的localhost:3306
 
 ## 🔧 管理命令
 
@@ -93,10 +93,10 @@ cd front && docker-compose down
 
 ### 后端服务 (backend/)
 - **端口**：1110
-- **数据库**：MySQL 8.0
+- **数据库**：连接到服务器上的MySQL 3306端口
 - **环境变量**：
   - `NODE_ENV=production`
-  - `DB_HOST=mysql`
+  - `DB_HOST=host.docker.internal`
 
 ### 前端服务 (front/)
 - **端口**：1100

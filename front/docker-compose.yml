@@ -1,12 +1,11 @@
 version: '3.8'
 
 services:
-  # 前端服务
   frontend:
     build:
       context: .
     ports:
-      - "1100:80"
+      - "1100:1100"
     environment:
       - NODE_ENV=production
     networks:
