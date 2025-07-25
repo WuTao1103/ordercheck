@@ -5,8 +5,7 @@ services:
   backend:
     build:
       context: .
-    ports:
-      - "1110:1110"
+    network_mode: "host"
     environment:
       - NODE_ENV=production
       - PORT=1110
@@ -14,10 +13,4 @@ services:
       - DB_PORT=3306
       - DB_USER=root
       - DB_PASSWORD=123456
-      - DB_NAME=ordercheck_db
-    networks:
-      - backend-network
-
-networks:
-  backend-network:
-    driver: bridge 
+      - DB_NAME=ordercheck_db 

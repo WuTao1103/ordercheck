@@ -2,6 +2,14 @@
   text-align: center;
 }
 
+.App-header {
+  background-color: #282c34;
+  padding: 20px;
+  color: white;
+  min-height: 100vh;
+  position: relative;
+}
+
 .App-logo {
   height: 40vmin;
   pointer-events: none;
@@ -11,17 +19,6 @@
   .App-logo {
     animation: App-logo-spin infinite 20s linear;
   }
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
 }
 
 .App-link {
@@ -35,6 +32,43 @@
   to {
     transform: rotate(360deg);
   }
+}
+
+/* 语言切换按钮样式 */
+.language-switcher {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  display: flex;
+  gap: 10px;
+}
+
+.language-button {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.3s;
+}
+
+.language-button.active {
+  background-color: #007bff;
+  color: white;
+}
+
+.language-button.inactive {
+  background-color: #6c757d;
+  color: white;
+}
+
+.language-button:hover {
+  opacity: 0.8;
+}
+
+/* 主内容区域调整 */
+.main-content {
+  margin-top: 60px;
 }
 
 input[type="text"] {

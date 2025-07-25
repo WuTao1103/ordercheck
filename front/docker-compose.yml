@@ -4,13 +4,6 @@ services:
   frontend:
     build:
       context: .
-    ports:
-      - "1100:1100"
+    network_mode: "host"
     environment:
-      - NODE_ENV=production
-    networks:
-      - frontend-network
-
-networks:
-  frontend-network:
-    driver: bridge 
+      - NODE_ENV=production 

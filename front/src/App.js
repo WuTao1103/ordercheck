@@ -1,10 +1,13 @@
 import React, { useState, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import './App.css';
 import * as XLSX from 'xlsx';
 import successSound from './sounds/success.wav';
 import errorSound from './sounds/error.wav';
+import './i18n';
 
 function App() {
+  const { t, i18n } = useTranslation();
   const [todos, setTodos] = useState([]);
   const [filter, setFilter] = useState('all');
   const [workOrder, setWorkOrder] = useState('');
@@ -23,7 +26,12 @@ function App() {
   const workOrderRef = useRef(null);
 
   // API基础URL
-  const API_BASE_URL = 'http://192.168.0.50:1110/api';
+  const API_BASE_URL = '/api';
+
+  // 语言切换函数
+  const changeLanguage = (lng) => {
+    i18n.changeLanguage(lng);
+  };
 
   // 保存核对记录到数据库
   const saveCheckRecord = async (workOrder, trackingNumber, checkResult) => {
@@ -219,63 +227,96 @@ function App() {
   // 导出Excel函数
   const exportToExcel = (data) => {
     if (!data || data.length === 0) {
-      alert('没有可导出的数据！');
+      alert(t('noDataToExport'));
       return;
     }
     // 处理数据格式
     const exportData = data.map(item => ({
-      '工单号': item.work_order,
-      '跟踪号': item.tracking_number,
-      '核对结果': item.check_result ? '成功' : '失败',
-      '核对时间': formatDate(item.check_time)
+      [t('workOrderLabel')]: item.work_order,
+      [t('trackingNumberLabel')]: item.tracking_number,
+      [t('checkResult')]: item.check_result ? t('success') : t('failure'),
+      [t('checkTime')]: formatDate(item.check_time)
     }));
     const worksheet = XLSX.utils.json_to_sheet(exportData);
     const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, '核对记录');
-    XLSX.writeFile(workbook, '核对记录.xlsx');
+    XLSX.utils.book_append_sheet(workbook, worksheet, t('checkRecords'));
+    XLSX.writeFile(workbook, `${t('checkRecords')}.xlsx`);
   };
 
   // 导出主页面Excel函数
   const exportTodosToExcel = () => {
     if (!todos || todos.length === 0) {
-      alert('没有可导出的数据！');
+      alert(t('noDataToExport'));
       return;
     }
     const exportData = todos.map(item => ({
-      '寄修单号': item['寄修单号'],
-      '跟踪号': item['跟踪号'],
-      '完成状态': item.completed ? '已完成' : '未完成'
+      [t('workOrderLabel')]: item['寄修单号'],
+      [t('trackingNumberLabel')]: item['跟踪号'],
+      [t('completionStatus')]: item.completed ? t('completed') : t('notCompleted')
     }));
     const worksheet = XLSX.utils.json_to_sheet(exportData);
     const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, '待核对清单');
-    XLSX.writeFile(workbook, '待核对清单.xlsx');
+    XLSX.utils.book_append_sheet(workbook, worksheet, t('pendingCheckList'));
+    XLSX.writeFile(workbook, `${t('pendingCheckList')}.xlsx`);
   };
 
   return (
     <div className="App">
       <header className="App-header">
-        <h1>Order Check</h1>
+        <h1>{t('title')}</h1>
+        
+        {/* 语言切换按钮 */}
+        <div className="language-switcher">
+          <button 
+            onClick={() => changeLanguage('zh')}
+            className={`language-button ${i18n.language === 'zh' ? 'active' : 'inactive'}`}
+          >
+            {t('chinese')}
+          </button>
+          <button 
+            onClick={() => changeLanguage('en')}
+            className={`language-button ${i18n.language === 'en' ? 'active' : 'inactive'}`}
+          >
+            {t('english')}
+          </button>
+        </div>
         
         {/* 主功能区域 */}
         <div style={{ display: showRecords ? 'none' : 'block' }}>
-          <input type="file" accept=".xlsx" onChange={handleFileUpload} />
+          <input 
+            type="file" 
+            accept=".xlsx" 
+            onChange={handleFileUpload}
+            style={{ display: 'none' }}
+            id="file-upload"
+          />
+          <label htmlFor="file-upload" style={{
+            background: '#007bff',
+            color: 'white',
+            padding: '10px 20px',
+            borderRadius: '5px',
+            cursor: 'pointer',
+            display: 'inline-block',
+            margin: '10px'
+          }}>
+            {t('selectFile')}
+          </label>
           <div>
-            <p>总事项数: {totalCount}</p>
-            <p>已完成数: {completedCount}</p>
-            <p>未完成数: {incompleteCount}</p>
-            <p>完成百分比: {completionPercentage.toFixed(2)}%</p>
+            <p>{t('totalItems')}: {totalCount}</p>
+            <p>{t('completedItems')}: {completedCount}</p>
+            <p>{t('incompleteItems')}: {incompleteCount}</p>
+            <p>{t('completionPercentage')}: {completionPercentage.toFixed(2)}%</p>
           </div>
           <div>
-            <button onClick={() => setFilter('all')}>全部</button>
-            <button onClick={() => setFilter('completed')}>已完成</button>
-            <button onClick={() => setFilter('incomplete')}>未完成</button>
-            <button onClick={() => exportTodosToExcel()} style={{ marginLeft: '10px' }}>导出Excel</button>
+            <button onClick={() => setFilter('all')}>{t('all')}</button>
+            <button onClick={() => setFilter('completed')}>{t('completed')}</button>
+            <button onClick={() => setFilter('incomplete')}>{t('incomplete')}</button>
+            <button onClick={() => exportTodosToExcel()} style={{ marginLeft: '10px' }}>{t('exportExcel')}</button>
           </div>
           <div>
             <input
               type="text"
-              placeholder="输入工单号"
+              placeholder={t('workOrderPlaceholder')}
               value={workOrder}
               onChange={(e) => setWorkOrder(e.target.value)}
               onKeyDown={handleWorkOrderKeyDown}
@@ -283,13 +324,13 @@ function App() {
             />
             <input
               type="text"
-              placeholder="输入运输单号"
+              placeholder={t('trackingNumberPlaceholder')}
               value={trackingNumber}
               onChange={(e) => setTrackingNumber(e.target.value)}
               onKeyDown={handleTrackingNumberKeyDown}
               ref={trackingNumberRef}
             />
-            <button onClick={() => handleCheck(trackingNumber)}>核对</button>
+            <button onClick={() => handleCheck(trackingNumber)}>{t('check')}</button>
           </div>
           <ul>
             {filteredTodos.map((todo, index) => (
@@ -299,8 +340,8 @@ function App() {
                   checked={todo.completed || false}
                   onChange={() => toggleComplete(index)}
                 />
-                {todo['寄修单号']} - {todo['跟踪号']}
-                <button onClick={() => deleteTodo(index)}>删除</button>
+                {todo[t('repairOrderNumber')] || todo['寄修单号']} - {todo[t('trackingNumberField')] || todo['跟踪号']}
+                <button onClick={() => deleteTodo(index)}>{t('delete')}</button>
               </li>
             ))}
           </ul>
@@ -308,19 +349,19 @@ function App() {
 
         {/* 查询记录区域 */}
         <div style={{ display: showRecords ? 'block' : 'none' }}>
-          <h2>查询记录</h2>
+          <h2>{t('queryRecords')}</h2>
           
           {/* 搜索条件 */}
           <div style={{ marginBottom: '20px' }}>
             <input
               type="text"
-              placeholder="工单号"
+              placeholder={t('workOrder')}
               value={searchParams.workOrder}
               onChange={(e) => setSearchParams({...searchParams, workOrder: e.target.value})}
             />
             <input
               type="text"
-              placeholder="跟踪号"
+              placeholder={t('trackingNumber')}
               value={searchParams.trackingNumber}
               onChange={(e) => setSearchParams({...searchParams, trackingNumber: e.target.value})}
             />
@@ -334,17 +375,17 @@ function App() {
               value={searchParams.endDate}
               onChange={(e) => setSearchParams({...searchParams, endDate: e.target.value})}
             />
-            <button onClick={handleSearchRecords}>查询</button>
-            <button onClick={() => exportToExcel(records)} style={{ marginLeft: '10px' }}>导出Excel</button>
+            <button onClick={handleSearchRecords}>{t('search')}</button>
+            <button onClick={() => exportToExcel(records)} style={{ marginLeft: '10px' }}>{t('exportExcel')}</button>
           </div>
 
           {/* 统计信息 */}
           {stats.totalChecks > 0 && (
             <div style={{ marginBottom: '20px', padding: '10px' }}>
-              <p>总核对次数: {stats.totalChecks}</p>
-              <p>成功次数: {stats.successCount}</p>
-              <p>失败次数: {stats.failureCount}</p>
-              <p>成功率: {stats.successRate}%</p>
+              <p>{t('totalChecks')}: {stats.totalChecks}</p>
+              <p>{t('successCount')}: {stats.successCount}</p>
+              <p>{t('failureCount')}: {stats.failureCount}</p>
+              <p>{t('successRate')}: {stats.successRate}%</p>
             </div>
           )}
 
@@ -353,10 +394,10 @@ function App() {
             <table style={{ width: '100%', borderCollapse: 'collapse' }}>
               <thead>
                 <tr>
-                  <th style={{ border: '1px solid #ddd', padding: '8px' }}>工单号</th>
-                  <th style={{ border: '1px solid #ddd', padding: '8px' }}>跟踪号</th>
-                  <th style={{ border: '1px solid #ddd', padding: '8px' }}>核对结果</th>
-                  <th style={{ border: '1px solid #ddd', padding: '8px' }}>核对时间</th>
+                  <th style={{ border: '1px solid #ddd', padding: '8px' }}>{t('workOrder')}</th>
+                  <th style={{ border: '1px solid #ddd', padding: '8px' }}>{t('trackingNumber')}</th>
+                  <th style={{ border: '1px solid #ddd', padding: '8px' }}>{t('checkResult')}</th>
+                  <th style={{ border: '1px solid #ddd', padding: '8px' }}>{t('checkTime')}</th>
                 </tr>
               </thead>
               <tbody>
@@ -365,7 +406,7 @@ function App() {
                     <td style={{ border: '1px solid #ddd', padding: '8px' }}>{record.work_order}</td>
                     <td style={{ border: '1px solid #ddd', padding: '8px' }}>{record.tracking_number}</td>
                     <td style={{ border: '1px solid #ddd', padding: '8px', color: record.check_result ? 'green' : 'red' }}>
-                      {record.check_result ? '成功' : '失败'}
+                      {record.check_result ? t('success') : t('failure')}
                     </td>
                     <td style={{ border: '1px solid #ddd', padding: '8px' }}>{formatDate(record.check_time)}</td>
                   </tr>
@@ -387,7 +428,7 @@ function App() {
               setShowRecords(false);
             }
           }}>
-            {showRecords ? '返回主功能' : '查看记录'}
+            {showRecords ? t('backToMain') : t('viewRecords')}
           </button>
         </div>
       </header>
