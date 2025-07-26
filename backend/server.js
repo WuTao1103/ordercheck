@@ -182,7 +182,7 @@ app.get('/api/check-records/stats', async (req, res) => {
 async function startServer() {
   await initializeDatabase();
   
-  app.listen(PORT, () => {
+  app.listen(PORT, '0.0.0.0', () => {
     console.log(`服务器运行在端口 ${PORT}`);
   });
 }

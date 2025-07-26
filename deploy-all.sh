@@ -1,7 +1,7 @@
 #!/bin/bash
 
-echo "🚀 订单核对系统部署脚本"
-echo "========================"
+echo "🚀 订单核对系统部署脚本 (Host模式)"
+echo "=================================="
 
 # 检查参数
 if [ "$1" = "backend" ]; then
@@ -20,9 +20,14 @@ elif [ "$1" = "all" ] || [ -z "$1" ]; then
     
     echo ""
     echo "✅ 全部服务部署完成！"
-    echo "📱 前端地址: http://192.168.0.50:1100"
-    echo "🔗 后端API: http://192.168.0.50:1110"
+    echo "📱 前端地址: http://宿主机IP:1100"
+    echo "🔗 后端API: http://宿主机IP:1110"
     echo "🗄️  数据库: 192.168.0.50:3306"
+    echo ""
+    echo "💡 外网访问说明:"
+    echo "   - 确保宿主机IP的1100和1110端口已对外开放"
+    echo "   - 前端通过Nginx代理访问后端API"
+    echo "   - 所有API请求都会自动转发到后端"
 else
     echo "❌ 无效参数"
     echo "用法: ./deploy-all.sh [backend|frontend|all]"
